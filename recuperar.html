@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RECUPERAR CONTRASEÑA | CYBER_PLAYER</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Fondos -->
+    <div class="matrix-bg"></div>
+    <div class="matrix-rain" id="matrix"></div>
+    <div class="tech-grid"></div>
+    <div class="scanlines"></div>
+
+    <!-- Navegación -->
+    <nav class="sticky top-0 z-50 bg-black/80 backdrop-blur-md border-b border-yellow-500/30">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="registro.html" class="group flex items-center gap-2 text-cyan-400 hover:text-cyan-300 transition">
+                <div class="w-10 h-10 rounded-lg border border-cyan-500/50 bg-cyan-500/10 flex items-center justify-center group-hover:bg-cyan-500/20 transition">
+                    <i class="fas fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
+                </div>
+                <div class="hidden sm:block">
+                    <div class="text-xs text-gray-400">REGRESAR</div>
+                    <div class="text-sm font-bold font-display">LOGIN</div>
+                </div>
+            </a>
+
+            <div class="text-yellow-400 font-display font-bold text-lg tracking-wider">
+                <i class="fas fa-key mr-2 animate-pulse"></i>
+                RECUPERACIÓN
+            </div>
+
+            <div class="w-10"></div>
+        </div>
+    </nav>
+
+    <!-- Contenido -->
+    <main class="flex-1 w-full max-w-md mx-auto z-10 p-4 py-12 flex items-center justify-center">
+
+        <div class="w-full rgb-border rounded-2xl p-1">
+            <div class="bg-black/90 rounded-2xl p-8 relative overflow-hidden">
+
+                <!-- Paso 1: Solicitar recuperación -->
+                <div id="recovery-step-1">
+                    <div class="text-center mb-6">
+                        <div class="w-20 h-20 mx-auto bg-yellow-500/20 rounded-full flex items-center justify-center mb-4 animate-pulse">
+                            <i class="fas fa-key text-3xl text-yellow-400"></i>
+                        </div>
+                        <h1 class="text-2xl font-bold text-white mb-2">¿Olvidaste tu contraseña?</h1>
+                        <p class="text-sm text-gray-400">
+                            Ingresa tu email y te enviaremos instrucciones para restablecerla.
+                        </p>
+                    </div>
+
+                    <form id="recovery-form" class="space-y-4">
+                        <div>
+                            <label class="block text-xs text-gray-400 uppercase tracking-wider mb-2">Email de tu cuenta</label>
+                            <div class="relative">
+                                <i class="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                                <input type="email" id="recovery-email" required
+                                       class="w-full bg-gray-900 border border-gray-700 rounded-lg py-3 pl-12 pr-4 text-white focus:border-yellow-500 focus:outline-none transition"
+                                       placeholder="tu@email.com">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full py-3 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg font-bold text-black hover:shadow-lg hover:shadow-yellow-500/30 transition transform hover:scale-[1.02]">
+                            <i class="fas fa-paper-plane mr-2"></i>ENVIAR INSTRUCCIONES
+                        </button>
+                    </form>
+
+                    <div class="mt-6 text-center">
+                        <a href="registro.html" class="text-sm text-cyan-400 hover:text-cyan-300">
+                            <i class="fas fa-arrow-left mr-1"></i>Volver al login
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Paso 2: Email enviado -->
+                <div id="recovery-step-2" class="hidden text-center">
+                    <div class="w-20 h-20 mx-auto bg-green-500/20 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-check-circle text-3xl text-green-400"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-white mb-2">¡Revisa tu email!</h2>
+                    <p class="text-sm text-gray-400 mb-4">
+                        Hemos enviado un enlace de recuperación a:<br>
+                        <span id="recovery-email-display" class="text-yellow-400 font-mono"></span>
+                    </p>
+                    <div class="bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-4 mb-4">
+                        <p class="text-xs text-yellow-400">
+                            <i class="fas fa-clock mr-1"></i>
+                            El enlace expira en 24 horas
+                        </p>
+                    </div>
+                    <p class="text-xs text-gray-500 mb-4">
+                        ¿No recibiste el email? Revisa tu carpeta de spam o
+                        <button onclick="backToRecoveryStep1()" class="text-cyan-400 hover:underline">intenta con otro email</button>
+                    </p>
+                    <a href="registro.html" class="inline-block px-6 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-sm transition">
+                        <i class="fas fa-sign-in-alt mr-2"></i>Ir al login
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="text-center text-gray-600 text-xs font-mono py-6">
+        <p>vidalangel604@gmail.com</p>
+    </footer>
+
+    <div id="toast" class="fixed bottom-4 right-4 px-6 py-3 rounded-lg font-bold text-white transform translate-y-20 opacity-0 transition-all duration-300 z-50"></div>
+
+    <script src="js/email-service.js"></script>
+    <script src="js/auth-background.js"></script>
+    <script>
+        // ============================================
+        // RECUPERACIÓN DE CONTRASEÑA - FRONTEND
+        // ============================================
+
+        document.getElementById('recovery-form')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('recovery-email').value;
+            const btn = e.target.querySelector('button');
+            
+            // Loading state
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>ENVIANDO...';
+            btn.disabled = true;
+            
+            try {
+                // Llamar al backend
+                const response = await fetch('php/send-recovery.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById('recovery-email-display').textContent = email;
+                    document.getElementById('recovery-step-1').classList.add('hidden');
+                    document.getElementById('recovery-step-2').classList.remove('hidden');
+                } else {
+                    showToast(result.message, 'error');
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                // Simulación para demo sin backend
+                document.getElementById('recovery-email-display').textContent = email;
+                document.getElementById('recovery-step-1').classList.add('hidden');
+                document.getElementById('recovery-step-2').classList.remove('hidden');
+            }
+            
+            btn.innerHTML = '<i class="fas fa-paper-plane mr-2"></i>ENVIAR INSTRUCCIONES';
+            btn.disabled = false;
+        });
+
+        function backToRecoveryStep1() {
+            document.getElementById('recovery-step-2').classList.add('hidden');
+            document.getElementById('recovery-step-1').classList.remove('hidden');
+            document.getElementById('recovery-email').value = '';
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = type === 'error' ? 'error' : '';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // Matrix rain
+        function initMatrixRain() {
+            const matrix = document.getElementById('matrix');
+            if (!matrix) return;
+            
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()';
+            const columns = Math.floor(window.innerWidth / 20);
+            
+            for (let i = 0; i < columns; i++) {
+                const column = document.createElement('div');
+                column.style.cssText = `
+                    position: absolute;
+                    left: ${i * 20}px;
+                    top: -100%;
+                    font-family: 'Share Tech Mono', monospace;
+                    font-size: 14px;
+                    color: #39ff14;
+                    text-shadow: 0 0 10px #39ff14;
+                    animation: matrix-fall ${Math.random() * 3 + 2}s linear infinite;
+                    animation-delay: ${Math.random() * 2}s;
+                    white-space: nowrap;
+                `;
+                
+                let text = '';
+                for (let j = 0; j < 20; j++) {
+                    text += chars[Math.floor(Math.random() * chars.length)] + '<br>';
+                }
+                column.innerHTML = text;
+                matrix.appendChild(column);
+            }
+        }
+
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes matrix-fall {
+                to { transform: translateY(200vh); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        initMatrixRain();
+    </script>
+</body>
+</html>

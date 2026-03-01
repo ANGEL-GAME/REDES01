@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VERIFICAR EMAIL | CYBER_PLAYER</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Fondos -->
+    <div class="matrix-bg"></div>
+    <div class="matrix-rain" id="matrix"></div>
+    <div class="tech-grid"></div>
+    <div class="scanlines"></div>
+
+    <!-- Navegación -->
+    <nav class="sticky top-0 z-50 bg-black/80 backdrop-blur-md border-b border-cyan-500/30">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="registro.html" class="group flex items-center gap-2 text-cyan-400 hover:text-cyan-300 transition">
+                <div class="w-10 h-10 rounded-lg border border-cyan-500/50 bg-cyan-500/10 flex items-center justify-center group-hover:bg-cyan-500/20 transition">
+                    <i class="fas fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
+                </div>
+                <div class="hidden sm:block">
+                    <div class="text-xs text-gray-400">REGRESAR</div>
+                    <div class="text-sm font-bold font-display">REGISTRO</div>
+                </div>
+            </a>
+
+            <div class="text-cyan-400 font-display font-bold text-lg tracking-wider">
+                <i class="fas fa-envelope-open-text mr-2 animate-pulse"></i>
+                VERIFICACIÓN
+            </div>
+
+            <div class="w-10"></div>
+        </div>
+    </nav>
+
+    <!-- Contenido -->
+    <main class="flex-1 w-full max-w-md mx-auto z-10 p-4 py-12 flex items-center justify-center">
+
+        <div class="w-full rgb-border rounded-2xl p-1">
+            <div class="bg-black/90 rounded-2xl p-8 relative overflow-hidden text-center">
+
+                <!-- Verificando -->
+                <div id="verify-loading">
+                    <div class="w-20 h-20 mx-auto bg-cyan-500/20 rounded-full flex items-center justify-center mb-4 animate-pulse">
+                        <i class="fas fa-spinner fa-spin text-3xl text-cyan-400"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-white mb-2">Verificando tu email...</h2>
+                    <p class="text-sm text-gray-400">Por favor espera un momento</p>
+                </div>
+
+                <!-- Éxito -->
+                <div id="verify-success" class="hidden">
+                    <div class="w-20 h-20 mx-auto bg-green-500/20 rounded-full flex items-center justify-center mb-4 animate-bounce">
+                        <i class="fas fa-check-circle text-3xl text-green-400"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-white mb-2">¡Email verificado!</h2>
+                    <p class="text-sm text-gray-400 mb-4">
+                        Tu cuenta ha sido activada exitosamente.
+                    </p>
+                    <a href="registro.html" class="inline-block px-6 py-2 bg-cyan-500 hover:bg-cyan-400 rounded-lg font-bold text-black transition">
+                        <i class="fas fa-sign-in-alt mr-2"></i>INICIAR SESIÓN
+                    </a>
+                </div>
+
+                <!-- Error -->
+                <div id="verify-error" class="hidden">
+                    <div class="w-20 h-20 mx-auto bg-red-500/20 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-times-circle text-3xl text-red-400"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-white mb-2">Verificación fallida</h2>
+                    <p class="text-sm text-gray-400 mb-4" id="error-message">
+                        El enlace es inválido o ha expirado.
+                    </p>
+                    <div class="space-y-2">
+                        <a href="registro.html" class="inline-block px-6 py-2 bg-yellow-500 hover:bg-yellow-400 rounded-lg font-bold text-black transition">
+                            <i class="fas fa-redo mr-2"></i>REGISTRARSE DE NUEVO
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Ingresar código manual -->
+                <div id="verify-manual" class="hidden mt-6 pt-6 border-t border-gray-800">
+                    <p class="text-sm text-gray-400 mb-3">¿Tienes un código de verificación?</p>
+                    <div class="flex justify-center gap-2">
+                        <input type="text" id="manual-code" placeholder="000000" maxlength="6"
+                               class="w-32 bg-gray-900 border border-gray-700 rounded-lg py-2 px-4 text-center text-xl font-bold text-white focus:border-cyan-500 focus:outline-none tracking-widest">
+                        <button onclick="verifyManualCode()" class="px-4 py-2 bg-cyan-600 hover:bg-cyan-500 rounded-lg font-bold transition">
+                            <i class="fas fa-check"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="text-center text-gray-600 text-xs font-mono py-6">
+        <p>vidalangel604@gmail.com</p>
+    </footer>
+     <script src="js/auth-background.js"></script>
+    <script>
+        // ============================================
+        // VERIFICACIÓN DE EMAIL - FRONTEND
+        // ============================================
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        const email = urlParams.get('email');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (token && email) {
+                verifyWithToken();
+            } else {
+                showManualEntry();
+            }
+            initMatrixRain();
+        });
+
+        async function verifyWithToken() {
+            try {
+                const response = await fetch('php/verify-email.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token, email })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showSuccess();
+                } else {
+                    showError(result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                // Demo: simular éxito después de 2 segundos
+                setTimeout(() => showSuccess(), 2000);
+            }
+        }
+
+        async function verifyManualCode() {
+            const code = document.getElementById('manual-code').value;
+            
+            if (code.length !== 6) {
+                alert('Ingresa el código de 6 dígitos');
+                return;
+            }
+
+            try {
+                const response = await fetch('php/verify-email.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, code })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showSuccess();
+                } else {
+                    alert('Código incorrecto');
+                }
+            } catch (error) {
+                showSuccess(); // Demo
+            }
+        }
+
+        function showSuccess() {
+            document.getElementById('verify-loading').classList.add('hidden');
+            document.getElementById('verify-success').classList.remove('hidden');
+            document.getElementById('verify-manual').classList.add('hidden');
+        }
+
+        function showError(message) {
+            document.getElementById('verify-loading').classList.add('hidden');
+            document.getElementById('verify-error').classList.remove('hidden');
+            if (message) {
+                document.getElementById('error-message').textContent = message;
+            }
+            document.getElementById('verify-manual').classList.remove('hidden');
+        }
+
+        function showManualEntry() {
+            document.getElementById('verify-loading').classList.add('hidden');
+            document.getElementById('verify-manual').classList.remove('hidden');
+        }
+
+        // Matrix rain
+        function initMatrixRain() {
+            const matrix = document.getElementById('matrix');
+            if (!matrix) return;
+            
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()';
+            const columns = Math.floor(window.innerWidth / 20);
+            
+            for (let i = 0; i < columns; i++) {
+                const column = document.createElement('div');
+                column.style.cssText = `
+                    position: absolute;
+                    left: ${i * 20}px;
+                    top: -100%;
+                    font-family: monospace;
+                    font-size: 14px;
+                    color: #39ff14;
+                    text-shadow: 0 0 10px #39ff14;
+                    animation: matrix-fall ${Math.random() * 3 + 2}s linear infinite;
+                    animation-delay: ${Math.random() * 2}s;
+                    white-space: nowrap;
+                `;
+                
+                let text = '';
+                for (let j = 0; j < 20; j++) {
+                    text += chars[Math.floor(Math.random() * chars.length)] + '<br>';
+                }
+                column.innerHTML = text;
+                matrix.appendChild(column);
+            }
+        }
+
+        const style = document.createElement('style');
+        style.textContent = `@keyframes matrix-fall { to { transform: translateY(200vh); } }`;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

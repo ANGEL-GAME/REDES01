@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DONACIONES | CYBER_PLAYER</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    
+    <!-- Estilos -->
+    <link rel="stylesheet" href="css/donaciones.css">
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Efectos de fondo (mismos que página principal) -->
+    <div class="matrix-bg"></div>
+    <div class="matrix-rain" id="matrix"></div>
+    <div class="tech-grid"></div>
+    <div class="scanlines"></div>
+
+    <!-- Menú de navegación superior -->
+    <nav class="sticky top-0 z-50 bg-black/80 backdrop-blur-md border-b border-cyan-500/30">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <!-- Botón volver -->
+            <a href="index.html" class="group flex items-center gap-2 text-cyan-400 hover:text-cyan-300 transition">
+                <div class="w-10 h-10 rounded-lg border border-cyan-500/50 bg-cyan-500/10 flex items-center justify-center group-hover:bg-cyan-500/20 transition">
+                    <i class="fas fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
+                </div>
+                <div class="hidden sm:block">
+                    <div class="text-xs text-gray-400">REGRESAR</div>
+                    <div class="text-sm font-bold font-display">PÁGINA PRINCIPAL</div>
+                </div>
+            </a>
+
+            <!-- Logo central -->
+            <div class="text-center">
+                <div class="text-yellow-400 font-display font-bold text-lg tracking-wider">
+                    <i class="fas fa-gift mr-2 animate-bounce"></i>
+                    CENTRO DE APOYO
+                </div>
+            </div>
+
+            <!-- Email de contacto -->
+            <div class="hidden sm:block text-right">
+                <div class="text-xs text-gray-400">PAYMENTS TO</div>
+                <div class="text-sm font-mono text-green-400">vidalangel604@gmail.com</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <main class="flex-1 w-full max-w-4xl mx-auto z-10 p-4 py-8">
+
+        <!-- Header de donaciones -->
+        <div class="rgb-border rounded-2xl p-1 mb-8">
+            <div class="bg-black/90 rounded-2xl p-8 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-yellow-500/10 rounded-full blur-3xl"></div>
+                <div class="absolute bottom-0 left-0 w-64 h-64 bg-pink-500/10 rounded-full blur-3xl"></div>
+                
+                <div class="relative z-10 text-center">
+                    <h1 class="glitch text-4xl md:text-5xl mb-4 text-white" data-text="DONACIONES">DONACIONES</h1>
+                    <p class="text-gray-400 max-w-lg mx-auto mb-6">
+                        Tu apoyo mantiene vivo el contenido. Cada donación me ayuda a crear más streams, videos y mejorar el equipo.
+                    </p>
+                    
+                                   <!-- Meta de Donadores (Pública para todos, editable solo para admins) -->
+        <div class="rgb-border rounded-2xl p-1 mb-8" id="donation-goal-section">
+            <div class="bg-black/90 rounded-2xl p-6 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 rounded-full blur-3xl"></div>
+                
+                <div class="relative z-10">
+                    <!-- Header: Título público + controles admin (ocultos por defecto) -->
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h2 class="text-yellow-400 font-bold text-lg flex items-center gap-2">
+                                <i class="fas fa-bullseye animate-pulse"></i>
+                                META DE DONADORES
+                            </h2>
+                            <p class="text-xs text-gray-500 mt-1">
+                                Mes: <span id="current-month" class="text-cyan-400"></span>
+                                <span class="mx-2">|</span>
+                                <span id="donors-count-public">0</span> donadores
+                            </p>
+                        </div>
+                        
+                        <!-- BOTÓN ADMIN: Solo visible para administradores -->
+                        <button id="admin-toggle-btn" onclick="toggleAdminControls()" 
+                                class="hidden text-gray-600 hover:text-yellow-400 transition p-2 rounded-lg hover:bg-yellow-500/10" 
+                                title="Panel de administración">
+                            <i class="fas fa-cog text-lg animate-spin-slow"></i>
+                            <span class="sr-only">Admin</span>
+                        </button>
+                    </div>
+
+                    <!-- Barra de progreso principal (PÚBLICA) -->
+                    <div class="relative mb-4">
+                        <div class="flex justify-between items-end mb-2">
+                            <div class="text-3xl font-bold font-display text-white">
+                                $<span id="current-amount">0</span>
+                                <span class="text-lg text-gray-500">/ $<span id="goal-amount">500</span></span>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-2xl font-bold text-yellow-400" id="percentage-display">0%</div>
+                                <div class="text-xs text-gray-500" id="remaining-text">Faltan $500</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Barra con animación -->
+                        <div class="h-6 bg-gray-800 rounded-full overflow-hidden border-2 border-gray-700 relative">
+                            <div class="absolute inset-0 bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800 animate-shimmer-bg"></div>
+                            
+                            <div id="progress-bar" class="h-full rounded-full relative transition-all duration-1000 ease-out" style="width: 0%">
+                                <div class="absolute inset-0 bg-gradient-to-r from-yellow-500 via-pink-500 to-purple-500 animate-gradient-shift"></div>
+                                <div class="absolute inset-0 bg-white/20 animate-shimmer"></div>
+                                <div class="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 bg-white rounded-full shadow-[0_0_10px_white] animate-ping"></div>
+                            </div>
+                            
+                            <div class="absolute inset-0 flex justify-between px-2">
+                                <div class="w-0.5 h-full bg-gray-600/50"></div>
+                                <div class="w-0.5 h-full bg-gray-600/50"></div>
+                                <div class="w-0.5 h-full bg-gray-600/50"></div>
+                                <div class="w-0.5 h-full bg-gray-600/50"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between text-[10px] text-gray-600 mt-1 font-mono">
+                            <span>0%</span>
+                            <span>25%</span>
+                            <span>50%</span>
+                            <span>75%</span>
+                            <span>100%</span>
+                        </div>
+                    </div>
+
+                    <!-- Lista de donadores recientes (PÚBLICA) -->
+                    <div class="bg-gray-900/50 rounded-lg p-3 border border-gray-800">
+                        <h3 class="text-xs text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-2">
+                            <i class="fas fa-trophy text-yellow-500"></i>
+                            Donadores Destacados
+                        </h3>
+                        <div id="recent-donors-public" class="space-y-1 max-h-24 overflow-y-auto text-sm">
+                            <div class="text-gray-600 text-center py-2 text-xs italic">Sé el primero en apoyar</div>
+                        </div>
+                    </div>
+
+                    <!-- CONTROLES DE ADMINISTRADOR (SOLO ADMINS) -->
+                    <div id="admin-controls" class="hidden mt-6 pt-6 border-t-2 border-yellow-500/30">
+                        <div class="flex items-center gap-2 mb-4">
+                            <i class="fas fa-shield-alt text-yellow-500"></i>
+                            <span class="text-yellow-500 font-bold text-sm uppercase tracking-wider">Panel de Control</span>
+                            <span class="text-xs text-gray-500 ml-auto">Solo Administradores</span>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                            <div class="bg-gray-900/80 rounded-lg p-3 border border-gray-700">
+                                <label class="text-[10px] text-gray-500 uppercase block mb-1">Meta Objetivo ($)</label>
+                                <input type="number" id="admin-goal" value="500" min="1"
+                                       class="w-full bg-gray-800 border border-gray-600 rounded px-2 py-1 text-sm text-white focus:border-yellow-500 focus:outline-none font-mono">
+                            </div>
+                            <div class="bg-gray-900/80 rounded-lg p-3 border border-gray-700">
+                                <label class="text-[10px] text-gray-500 uppercase block mb-1">Monto Actual ($)</label>
+                                <input type="number" id="admin-current" value="0" min="0"
+                                       class="w-full bg-gray-800 border border-gray-600 rounded px-2 py-1 text-sm text-white focus:border-yellow-500 focus:outline-none font-mono">
+                            </div>
+                            <div class="bg-gray-900/80 rounded-lg p-3 border border-gray-700">
+                                <label class="text-[10px] text-gray-500 uppercase block mb-1">Agregar Donación ($)</label>
+                                <input type="number" id="admin-add-amount" placeholder="0" min="1"
+                                       class="w-full bg-gray-800 border border-gray-600 rounded px-2 py-1 text-sm text-white focus:border-green-500 focus:outline-none font-mono">
+                            </div>
+                            <div class="bg-gray-900/80 rounded-lg p-3 border border-gray-700">
+                                <label class="text-[10px] text-gray-500 uppercase block mb-1">Nombre Donador</label>
+                                <input type="text" id="admin-donor-name" placeholder="Anónimo"
+                                       class="w-full bg-gray-800 border border-gray-600 rounded px-2 py-1 text-sm text-white focus:border-green-500 focus:outline-none">
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-wrap gap-2">
+                            <button onclick="updateGoalFromAdmin()" class="px-4 py-2 bg-yellow-600 hover:bg-yellow-500 rounded-lg text-xs font-bold transition flex items-center gap-2">
+                                <i class="fas fa-save"></i> Guardar Cambios
+                            </button>
+                            <button onclick="addManualDonation()" class="px-4 py-2 bg-green-600 hover:bg-green-500 rounded-lg text-xs font-bold transition flex items-center gap-2">
+                                <i class="fas fa-plus-circle"></i> Agregar Donación
+                            </button>
+                            <button onclick="resetMonthlyGoal()" class="px-4 py-2 bg-red-600/50 hover:bg-red-600 rounded-lg text-xs font-bold transition flex items-center gap-2" title="Resetear mes">
+                                <i class="fas fa-trash-alt"></i> Resetear
+                            </button>
+                            <button onclick="simulateRandomDonation()" class="px-4 py-2 bg-purple-600/50 hover:bg-purple-600 rounded-lg text-xs font-bold transition flex items-center gap-2" title="Simular">
+                                <i class="fas fa-dice"></i> Simular
+                            </button>
+                            <button onclick="exportDonations()" class="px-4 py-2 bg-blue-600/50 hover:bg-blue-600 rounded-lg text-xs font-bold transition flex items-center gap-2 ml-auto">
+                                <i class="fas fa-file-export"></i> Exportar
+                            </button>
+                        </div>
+                        
+                        <!-- Log de actividad admin -->
+                        <div class="mt-4 bg-black/50 rounded-lg p-3 border border-gray-800">
+                            <div class="text-[10px] text-gray-500 uppercase mb-2">Log de Actividad</div>
+                            <div id="admin-log" class="text-[10px] font-mono text-gray-400 space-y-1 max-h-20 overflow-y-auto">
+                                <div class="text-gray-600 italic">Sistema iniciado...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grid de métodos de pago -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+
+            <!-- PayPal -->
+            <div class="payment-card game-card rounded-xl p-6 relative group">
+                <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+                
+                <div class="flex items-start gap-4">
+                    <div class="w-14 h-14 rounded-xl bg-blue-600 flex items-center justify-center text-2xl shadow-lg shadow-blue-500/30">
+                        <i class="fab fa-paypal text-white"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-blue-400 mb-1">PayPal</h3>
+                        <p class="text-xs text-gray-400 mb-3">Tarjeta de crédito o saldo PayPal</p>
+                        
+                        <div class="flex gap-2 mb-3">
+                            <button onclick="setPayPalAmount(5)" class="paypal-amount-btn px-3 py-1 rounded border border-blue-500/30 text-xs hover:bg-blue-500/20 transition" data-amount="5">$5</button>
+                            <button onclick="setPayPalAmount(10)" class="paypal-amount-btn px-3 py-1 rounded border border-blue-500/30 text-xs hover:bg-blue-500/20 transition" data-amount="10">$10</button>
+                            <button onclick="setPayPalAmount(25)" class="paypal-amount-btn px-3 py-1 rounded border border-blue-500/30 text-xs hover:bg-blue-500/20 transition" data-amount="25">$25</button>
+                            <button onclick="setPayPalAmount(50)" class="paypal-amount-btn px-3 py-1 rounded border border-blue-500/30 text-xs hover:bg-blue-500/20 transition" data-amount="50">$50</button>
+                        </div>
+                        
+                        <form action="https://www.paypal.com/donate" method="post" target="_blank" class="mt-2">
+                            <input type="hidden" name="business" value="vidalangel604@gmail.com">
+                            <input type="hidden" name="currency_code" value="USD">
+                            <input type="hidden" name="amount" id="paypal-amount-input" value="10">
+                            <input type="hidden" name="item_name" value="Apoyo a ANGEL GAMER">
+                            <input type="hidden" name="return" value="https://tusitio.com/gracias">
+                            
+                            <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-500 rounded-lg font-bold transition flex items-center justify-center gap-2 group-hover:shadow-lg group-hover:shadow-blue-500/30">
+                                <i class="fab fa-paypal"></i>
+                                Donar $<span id="paypal-display-amount">10</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ko-fi -->
+            <div class="payment-card game-card rounded-xl p-6 relative group">
+                <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+                
+                <div class="flex items-start gap-4">
+                    <div class="w-14 h-14 rounded-xl bg-pink-500 flex items-center justify-center text-2xl shadow-lg shadow-pink-500/30">
+                        <i class="fas fa-coffee text-white"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-pink-400 mb-1">Ko-fi</h3>
+                        <p class="text-xs text-gray-400 mb-3">Compra un café mensual</p>
+                        
+                        <div class="space-y-2 mb-3">
+                            <label class="text-xs text-gray-500">Monto personalizado:</label>
+                            <div class="flex gap-2">
+                                <span class="text-pink-400 font-bold self-center">$</span>
+                                <input type="number" id="kofi-amount" value="5" min="1" 
+                                       class="flex-1 bg-gray-900 border border-pink-500/30 rounded px-3 py-2 text-sm focus:border-pink-500 focus:outline-none">
+                            </div>
+                        </div>
+                        
+                        <a id="kofi-link" href="https://ko-fi.com/cyberplayer?amount=5" target="_blank" 
+                           class="block w-full py-3 bg-pink-500 hover:bg-pink-400 rounded-lg font-bold transition text-center group-hover:shadow-lg group-hover:shadow-pink-500/30">
+                            <i class="fas fa-heart mr-2"></i>
+                            Apoyar en Ko-fi
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MercadoPago -->
+            <div class="payment-card game-card rounded-xl p-6 relative group">
+                <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+                
+                <div class="flex items-start gap-4">
+                    <div class="w-14 h-14 rounded-xl bg-cyan-500 flex items-center justify-center text-2xl shadow-lg shadow-cyan-500/30">
+                        <i class="fas fa-hand-holding-usd text-white"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-cyan-400 mb-1">MercadoPago</h3>
+                        <p class="text-xs text-gray-400 mb-3">Latinoamérica - Tarjeta, PSE, Oxxo</p>
+                        
+                        <div class="space-y-2 mb-3">
+                            <input type="email" id="mp-email" placeholder="Tu email para el recibo" 
+                                   class="w-full bg-gray-900 border border-cyan-500/30 rounded px-3 py-2 text-sm focus:border-cyan-500 focus:outline-none">
+                            <input type="number" id="mp-amount" placeholder="Monto en USD" value="10" min="1"
+                                   class="w-full bg-gray-900 border border-cyan-500/30 rounded px-3 py-2 text-sm focus:border-cyan-500 focus:outline-none">
+                        </div>
+                        
+                        <button onclick="generateMercadoPago()" class="w-full py-3 bg-cyan-500 hover:bg-cyan-400 rounded-lg font-bold transition group-hover:shadow-lg group-hover:shadow-cyan-500/30">
+                            Generar Link de Pago
+                        </button>
+                        
+                        <p class="text-[10px] text-gray-500 mt-2 text-center">
+                            <i class="fas fa-lock"></i> Pago seguro • Recibo a vidalangel604@gmail.com
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Criptomonedas -->
+            <div class="payment-card game-card rounded-xl p-6 relative group">
+                <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+                
+                <div class="flex items-start gap-4">
+                    <div class="w-14 h-14 rounded-xl bg-orange-500 flex items-center justify-center text-2xl shadow-lg shadow-orange-500/30">
+                        <i class="fab fa-bitcoin text-white"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-orange-400 mb-1">Cripto</h3>
+                        <p class="text-xs text-gray-400 mb-3">BTC, ETH, USDT, BNB</p>
+                        
+                        <div class="space-y-3">
+                            <div class="bg-gray-900/80 rounded-lg p-3 border border-orange-500/20">
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="text-xs text-orange-400 font-bold"><i class="fab fa-bitcoin mr-1"></i>BTC</span>
+                                    <button onclick="copyToClipboard('bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh', 'BTC')" class="text-xs text-cyan-400 hover:text-cyan-300">
+                                        <i class="fas fa-copy"></i> Copiar
+                                    </button>
+                                </div>
+                                <code class="text-[10px] text-gray-400 break-all block">bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh</code>
+                            </div>
+                            
+                            <div class="bg-gray-900/80 rounded-lg p-3 border border-orange-500/20">
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="text-xs text-purple-400 font-bold"><i class="fab fa-ethereum mr-1"></i>ETH</span>
+                                    <button onclick="copyToClipboard('0x71C7656EC7ab88b098defB751B7401B5f6d8976F', 'ETH')" class="text-xs text-cyan-400 hover:text-cyan-300">
+                                        <i class="fas fa-copy"></i> Copiar
+                                    </button>
+                                </div>
+                                <code class="text-[10px] text-gray-400 break-all block">0x71C7656EC7ab88b098defB751B7401B5f6d8976F</code>
+                            </div>
+                        </div>
+                        
+                        <p class="text-[10px] text-orange-400 mt-3 text-center">
+                            <i class="fas fa-info-circle"></i> Enviar comprobante a vidalangel604@gmail.com
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Transferencia bancaria (ancho completo) 
+        <div class="rgb-border rounded-2xl p-1 mb-8">
+            <div class="game-card rounded-2xl p-6 relative bg-black/90">
+                <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+                
+                <div class="flex flex-col md:flex-row items-center gap-6">
+                    <div class="w-16 h-16 rounded-xl bg-green-600 flex items-center justify-center text-3xl shadow-lg shadow-green-500/30">
+                        <i class="fas fa-university text-white"></i>
+                    </div>
+                    
+                    <div class="flex-1 text-center md:text-left">
+                        <h3 class="text-2xl font-bold text-green-400 mb-2">Transferencia Bancaria / SPEI</h3>
+                        <p class="text-sm text-gray-400 mb-4">Disponible para México y Latinoamérica</p>
+                        
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                            <div class="bg-gray-900/50 rounded-lg p-3 border border-green-500/20">
+                                <div class="text-xs text-gray-500 mb-1">BANCO</div>
+                                <div class="text-white font-mono">BBVA</div>
+                            </div>
+                            <div class="bg-gray-900/50 rounded-lg p-3 border border-green-500/20">
+                                <div class="text-xs text-gray-500 mb-1">CUENTA</div>
+                                <div class="text-white font-mono text-xs">0123 4567 8901 2345</div>
+                            </div>
+                            <div class="bg-gray-900/50 rounded-lg p-3 border border-green-500/20">
+                                <div class="text-xs text-gray-500 mb-1">CLABE</div>
+                                <div class="text-white font-mono text-xs">012 345 678901234567</div>
+                            </div>
+                            <div class="bg-gray-900/50 rounded-lg p-3 border border-green-500/20">
+                                <div class="text-xs text-gray-500 mb-1">TITULAR</div>
+                                <div class="text-white font-mono text-xs">Angel Vidal</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="text-xs text-gray-500 mb-1">ENVIAR COMPROBANTE</div>
+                        <div class="text-green-400 font-mono text-sm">vidalangel604@gmail.com</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+      -->
+
+        <!-- Botón volver grande al final -->
+        <div class="text-center">
+            <a href="index.html" class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-xl font-bold text-lg hover:scale-105 transition-transform group">
+                <i class="fas fa-arrow-left group-hover:-translate-x-2 transition-transform"></i>
+                VOLVER A PÁGINA PRINCIPAL
+            </a>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center text-gray-600 text-xs font-mono py-6 border-t border-gray-800">
+        <p>© 2024 CYBER_PLAYER // PAYMENTS TO vidalangel604@gmail.com</p>
+    </footer>
+
+    <!-- Notificación toast -->
+    <div id="toast" class="fixed bottom-4 right-4 px-6 py-3 rounded-lg font-bold text-white transform translate-y-20 opacity-0 transition-all duration-300 z-50"></div>
+
+    <!-- Scripts -->
+    <script src="js/donaciones.js"></script>    <!-- Script de sesión global -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+    // Verificar sesión (opcional, permite anónimos pero muestra extras si hay sesión)
+    window.authSystem.checkPersistentSession();
+    
+    // Inicializar sistema de donaciones...
+});
+        // Actualizar UI según estado de sesión
+        document.addEventListener('DOMContentLoaded', () => {
+            updateSessionUI();
+        });
+        
+        function updateSessionUI() {
+            const auth = window.authSystem;
+            if (!auth) return;
+            
+            // Verificar sesión
+            auth.checkPersistentSession();
+            
+            // Crear o actualizar indicador de sesión en el menú
+            let sessionIndicator = document.getElementById('session-indicator');
+            
+            if (auth.isAuthenticated) {
+                // Usuario logueado - mostrar info y botón de logout
+                if (!sessionIndicator) {
+                    sessionIndicator = document.createElement('div');
+                    sessionIndicator.id = 'session-indicator';
+                    sessionIndicator.className = 'flex items-center gap-3';
+                    
+                    // Insertar en el menú (ajustar selector según tu estructura)
+                    const nav = document.querySelector('nav > div');
+                    if (nav) {
+                        nav.appendChild(sessionIndicator);
+                    }
+                }
+                
+                const roleColor = auth.currentUser.role === 'admin' ? 'text-yellow-400' : 'text-cyan-400';
+                const roleIcon = auth.currentUser.role === 'admin' ? 'fa-crown' : 'fa-user';
+                
+                sessionIndicator.innerHTML = `
+                    <div class="hidden md:block text-right">
+                        <div class="text-xs text-gray-400">CONECTADO</div>
+                        <div class="text-sm font-bold ${roleColor} flex items-center gap-1">
+                            <i class="fas ${roleIcon} text-xs"></i>
+                            ${auth.currentUser.username}
+                        </div>
+                    </div>
+                    <button onclick="logout()" class="w-10 h-10 rounded-lg border border-red-500/50 bg-red-500/10 flex items-center justify-center text-red-400 hover:bg-red-500/20 transition" title="Cerrar sesión">
+                        <i class="fas fa-power-off"></i>
+                    </button>
+                `;
+                
+                // Marcar body como autenticado para CSS
+                document.body.classList.add('is-authenticated');
+                if (auth.currentUser.role === 'admin') {
+                    document.body.classList.add('is-admin');
+                }
+                
+            } else {
+                // No logueado - mostrar botón de login
+                if (!sessionIndicator) {
+                    sessionIndicator = document.createElement('div');
+                    sessionIndicator.id = 'session-indicator';
+                    
+                    const nav = document.querySelector('nav > div');
+                    if (nav) {
+                        nav.appendChild(sessionIndicator);
+                    }
+                }
+                
+                sessionIndicator.innerHTML = `
+                    <a href="registro.html" class="flex items-center gap-2 px-4 py-2 bg-cyan-600/20 border border-cyan-500/50 rounded-lg text-cyan-400 hover:bg-cyan-600/30 transition">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span class="hidden sm:inline">Iniciar Sesión</span>
+                    </a>
+                `;
+            }
+        }
+        
+        function logout() {
+            if (confirm('¿Estás seguro de cerrar sesión?')) {
+                window.authSystem.logout();
+            }
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VERIFICACIÓN 2FA | CYBER_PLAYER</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Fondos -->
+    <div class="matrix-bg"></div>
+    <div class="matrix-rain" id="matrix"></div>
+    <div class="tech-grid"></div>
+    <div class="scanlines"></div>
+
+    <!-- Navegación -->
+    <nav class="sticky top-0 z-50 bg-black/80 backdrop-blur-md border-b border-yellow-500/30">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="registro.html" class="group flex items-center gap-2 text-cyan-400 hover:text-cyan-300 transition">
+                <div class="w-10 h-10 rounded-lg border border-cyan-500/50 bg-cyan-500/10 flex items-center justify-center group-hover:bg-cyan-500/20 transition">
+                    <i class="fas fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
+                </div>
+                <div class="hidden sm:block">
+                    <div class="text-xs text-gray-400">REGRESAR</div>
+                    <div class="text-sm font-bold font-display">LOGIN</div>
+                </div>
+            </a>
+
+            <div class="text-yellow-400 font-display font-bold text-lg tracking-wider">
+                <i class="fas fa-shield-alt mr-2 animate-pulse"></i>
+                2FA REQUERIDO
+            </div>
+
+            <div class="w-10"></div>
+        </div>
+    </nav>
+
+    <!-- Contenido -->
+    <main class="flex-1 w-full max-w-md mx-auto z-10 p-4 py-12 flex items-center justify-center">
+
+        <div class="w-full rgb-border rounded-2xl p-1">
+            <div class="bg-black/90 rounded-2xl p-8 relative overflow-hidden text-center">
+
+                <div class="w-24 h-24 mx-auto bg-yellow-500/20 rounded-full flex items-center justify-center mb-6 animate-pulse">
+                    <i class="fas fa-shield-alt text-4xl text-yellow-400"></i>
+                </div>
+
+                <h1 class="text-2xl font-bold text-white mb-2">Verificación adicional</h1>
+                <p class="text-sm text-gray-400 mb-6">
+                    Tu cuenta tiene activada la autenticación de dos factores.
+                    Ingresa el código de tu app de autenticación.
+                </p>
+
+                <!-- Input código -->
+                <div class="flex justify-center gap-2 mb-6">
+                    <input type="text" maxlength="1" class="2fa-code w-14 h-16 text-center text-3xl font-bold bg-gray-900 border-2 border-gray-700 rounded-lg focus:border-yellow-500 focus:outline-none text-white" data-index="0">
+                    <input type="text" maxlength="1" class="2fa-code w-14 h-16 text-center text-3xl font-bold bg-gray-900 border-2 border-gray-700 rounded-lg focus:border-yellow-500 focus:outline-none text-white" data-index="1">
+                    <input type="text" maxlength="1" class="2fa-code w-14 h-16 text-center text-3xl font-bold bg-gray-900 border-2 border-gray-700 rounded-lg focus:border-yellow-500 focus:outline-none text-white" data-index="2">
+                    <input type="text" maxlength="1" class="2fa-code w-14 h-16 text-center text-3xl font-bold bg-gray-900 border-2 border-gray-700 rounded-lg focus:border-yellow-500 focus:outline-none text-white" data-index="3">
+                    <input type="text" maxlength="1" class="2fa-code w-14 h-16 text-center text-3xl font-bold bg-gray-900 border-2 border-gray-700 rounded-lg focus:border-yellow-500 focus:outline-none text-white" data-index="4">
+                    <input type="text" maxlength="1" class="2fa-code w-14 h-16 text-center text-3xl font-bold bg-gray-900 border-2 border-gray-700 rounded-lg focus:border-yellow-500 focus:outline-none text-white" data-index="5">
+                </div>
+
+                <button onclick="submit2FA()" class="w-full py-3 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg font-bold text-black hover:shadow-lg hover:shadow-yellow-500/30 transition mb-4">
+                    <i class="fas fa-check mr-2"></i>VERIFICAR
+                </button>
+
+                <div class="space-y-2 text-xs">
+                    <p class="text-gray-500">
+                        ¿Perdiste acceso a tu app? 
+                        <button onclick="useBackupCode()" class="text-cyan-400 hover:underline">Usar código de respaldo</button>
+                    </p>
+                    <p class="text-gray-600">
+                        <i class="fas fa-lock mr-1"></i>
+                        Sesión iniciada: <span id="session-user" class="text-gray-400"></span>
+                    </p>
+                </div>
+
+                <!-- Código de respaldo (inicialmente oculto) -->
+                <div id="backup-code-section" class="hidden mt-6 pt-6 border-t border-gray-800">
+                    <p class="text-sm text-gray-400 mb-3">Ingresa uno de tus códigos de respaldo:</p>
+                    <input type="text" id="backup-code" placeholder="XXXX-XXXX-XXXX" maxlength="14"
+                           class="w-full bg-gray-900 border border-gray-700 rounded-lg py-3 px-4 text-center text-lg font-mono text-white focus:border-red-500 focus:outline-none tracking-widest uppercase">
+                    <button onclick="submitBackupCode()" class="w-full mt-3 py-2 bg-red-600/20 border border-red-600/50 text-red-400 rounded-lg hover:bg-red-600/30 transition">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>USAR CÓDIGO DE RESPALDO
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // ============================================
+        // VERIFICACIÓN 2FA - PÁGINA DEDICADA
+        // ============================================
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Obtener usuario pendiente de 2FA
+            const pending2FA = sessionStorage.getItem('pending2FA');
+            if (!pending2FA) {
+                window.location.href = 'registro.html';
+                return;
+            }
+
+            const data = JSON.parse(pending2FA);
+            document.getElementById('session-user').textContent = data.username;
+
+            // Setup inputs
+            setup2FAInputs();
+            initMatrixRain();
+        });
+
+        function setup2FAInputs() {
+            const inputs = document.querySelectorAll('.2fa-code');
+            
+            inputs.forEach((input, index) => {
+                input.addEventListener('input', (e) => {
+                    if (e.target.value.length === 1 && index < inputs.length - 1) {
+                        inputs[index + 1].focus();
+                    }
+                });
+
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                        inputs[index - 1].focus();
+                    }
+                });
+
+                input.addEventListener('paste', (e) => {
+                    e.preventDefault();
+                    const paste = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+                    paste.split('').forEach((char, i) => {
+                        if (inputs[i]) inputs[i].value = char;
+                    });
+                    if (inputs[paste.length - 1]) inputs[paste.length - 1].focus();
+                });
+            });
+
+            inputs[0].focus();
+        }
+
+        async function submit2FA() {
+            const inputs = document.querySelectorAll('.2fa-code');
+            const code = Array.from(inputs).map(i => i.value).join('');
+
+            if (code.length !== 6) {
+                alert('Ingresa el código completo');
+                return;
+            }
+
+            const pending2FA = JSON.parse(sessionStorage.getItem('pending2FA'));
+
+            try {
+                const response = await fetch('php/verify-2fa.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user_id: pending2FA.userId,
+                        code: code,
+                        method: 'totp'
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Guardar sesión
+                    localStorage.setItem('cyber_session', JSON.stringify({
+                        token: result.session_token,
+                        user: result.user,
+                        loginTime: new Date().toISOString()
+                    }));
+
+                    sessionStorage.removeItem('pending2FA');
+
+                    // Redirigir según rol
+                    if (result.user.role === 'admin') {
+                        window.location.href = 'admin.html';
+                    } else {
+                        window.location.href = 'index.html?welcome=true';
+                    }
+                } else {
+                    alert(result.message);
+                    inputs.forEach(i => i.value = '');
+                    inputs[0].focus();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                // Demo
+                localStorage.setItem('cyber_session', JSON.stringify({
+                    token: 'demo_token_123',
+                    user: pending2FA,
+                    loginTime: new Date().toISOString()
+                }));
+                window.location.href = 'index.html?welcome=true';
+            }
+        }
+
+        function useBackupCode() {
+            document.getElementById('backup-code-section').classList.remove('hidden');
+        }
+
+        async function submitBackupCode() {
+            const code = document.getElementById('backup-code').value.replace(/-/g, '');
+            
+            if (code.length !== 12) {
+                alert('Código de respaldo inválido');
+                return;
+            }
+
+            // Implementar verificación de código de respaldo
+            alert('Función de código de respaldo - implementar en backend');
+        }
+
+        // Matrix rain
+        function initMatrixRain() {
+            const matrix = document.getElementById('matrix');
+            if (!matrix) return;
+            
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()';
+            const columns = Math.floor(window.innerWidth / 20);
+            
+            for (let i = 0; i < columns; i++) {
+                const column = document.createElement('div');
+                column.style.cssText = `
+                    position: absolute;
+                    left: ${i * 20}px;
+                    top: -100%;
+                    font-family: monospace;
+                    font-size: 14px;
+                    color: #39ff14;
+                    text-shadow: 0 0 10px #39ff14;
+                    animation: matrix-fall ${Math.random() * 3 + 2}s linear infinite;
+                    animation-delay: ${Math.random() * 2}s;
+                    white-space: nowrap;
+                `;
+                
+                let text = '';
+                for (let j = 0; j < 20; j++) {
+                    text += chars[Math.floor(Math.random() * chars.length)] + '<br>';
+                }
+                column.innerHTML = text;
+                matrix.appendChild(column);
+            }
+        }
+
+        const style = document.createElement('style');
+        style.textContent = `@keyframes matrix-fall { to { transform: translateY(200vh); } }`;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
